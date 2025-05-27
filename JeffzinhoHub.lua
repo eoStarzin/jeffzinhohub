@@ -1,0 +1,86 @@
+local Players = game:GetService("Players")
+local Player = Players.LocalPlayer
+local HttpService = game:GetService("HttpService")
+
+-- Proteção Anti-Ban simples (auto kick se admin/mod entrar)
+local function AntiBan()
+    local success, err = pcall(function()
+        game:GetService("RunService").Stepped:Connect(function()
+            for _, plr in pairs(Players:GetPlayers()) do
+                if string.find(plr.Name:lower(), "admin") or string.find(plr.Name:lower(), "mod") then
+                    Player:Kick("Admin ou Moderador detectado. Saindo por segurança.")
+                end
+            end
+        end)
+    end)
+    if not success then warn("Falha no Anti-Ban:", err) end
+end
+AntiBan()
+
+-- Carregar a UI
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()
+local Window = Library.CreateLib("Jeffzinho Hub - Blox Fruits", "Ocean")
+
+-- Auto Farm
+local farmTab = Window:NewTab("Auto Farm")
+local farmSection = farmTab:NewSection("Farm Inimigos")
+
+farmSection:NewToggle("Ativar Auto Farm", "Ataca inimigos automaticamente", function(state)
+    _G.AutoFarm = state
+    while _G.AutoFarm do
+        pcall(function()
+            local enemy = game:GetService("Workspace").Enemies:FindFirstChildOfClass("Model")
+            if enemy and enemy:FindFirstChild("HumanoidRootPart") then
+                Player.Character.HumanoidRootPart.CFrame = enemy.HumanoidRootPart.CFrame * CFrame.new(0, 10, 0)
+                game:GetService("VirtualInputManager"):SendKeyEvent(true, "Z", false, game)
+            end
+        end)
+        task.wait(0.5)
+    end
+end)
+
+-- Auto V4 (script externo confiável)
+local v4Tab = Window:NewTab("Auto V4")
+local v4Section = v4Tab:NewSection("Despertar Raça")
+
+v4Section:NewButton("Ativar Auto V4", "Desperta sua raça automaticamente", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/Exunys/Utilities/main/BloxFruits/AutoRaceV4.lua"))()
+end)
+
+-- Auto Mirage Island
+local mirageTab = Window:NewTab("Mirage Island")
+local mirageSection = mirageTab:NewSection("Procurar Mirage")
+
+mirageSection:NewButton("Buscar Mirage Island", "Procura automaticamente a Mirage", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/ScriptRippers/MirageIslandFinder/main/main.lua"))()
+end)
+
+-- Auto Raids
+local raidsTab = Window:NewTab("Auto Raids")
+local raidsSection = raidsTab:NewSection("Fazer Raids")
+
+raidsSection:NewButton("Iniciar Auto Raids", "Faz raids automaticamente", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/ThunderZ-HUB/ThunderZHub/main/AutoRaid.lua"))()
+end)
+
+-- Auto Kill Bosses
+local bossTab = Window:NewTab("Auto Boss")
+local bossSection = bossTab:NewSection("Matar Chefes")
+
+bossSection:NewButton("Matar Todos Bosses", "Ataca todos os bosses automaticamente", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/NexusBladeX/AutoBossKill/main/BossKill.lua"))()
+end)
+
+-- FPS Boost
+local configTab = Window:NewTab("Configurações")
+local configSection = configTab:NewSection("Desempenho")
+
+configSection:NewButton("Boostar FPS", "Melhora o desempenho em dispositivos fracos", function()
+    for _, v in pairs(game:GetDescendants()) do
+        if v:IsA("BasePart") then
+            v.Material = Enum.Material.Plastic
+            v.Reflectance = 0
+        end
+    end
+    sethiddenproperty(game:GetService("Lighting"), "Technology", Enum.Technology.Compatibility)
+end)
